@@ -12,7 +12,6 @@
         body { background-color: #05070a; color: #e2e8f0; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
         .header-font { font-family: 'Orbitron', sans-serif; }
         
-        /* TARJETA DE PAGO */
         .pago-card { background: #161b26; border-radius: 20px; border: 1px solid #1e293b; padding: 20px; }
         .pago-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .label { color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; }
@@ -21,12 +20,10 @@
         .btn-copy-small { background: #1e293b; border-radius: 10px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
         .btn-copy-all { background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316; width: 100%; padding: 14px; border-radius: 15px; font-weight: 900; text-transform: uppercase; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; }
 
-        /* RULETA */
         #modal-ruleta { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; backdrop-filter: blur(10px); align-items: center; justify-content: center; }
         #wheel { width: 260px; height: 260px; border-radius: 50%; border: 6px solid #1e293b; transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1); background: conic-gradient(#2563eb 0deg 60deg, #0f172a 60deg 120deg, #1e293b 120deg 180deg, #0f172a 180deg 240deg, #1e293b 240deg 300deg, #0f172a 300deg 360deg); }
         .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ef4444; z-index: 110; }
 
-        /* PRODUCTOS */
         .game-card { background: #0f121a; border: 1px solid #1e293b; border-radius: 18px; margin-bottom: 10px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
         .product-name { font-weight: 900; color: white; font-size: 18px; text-transform: uppercase; }
         .price-bs { color: #3b82f6; font-weight: 900; font-size: 15px; }
@@ -83,29 +80,38 @@
                     <button onclick="copiarTexto('32824869')" class="btn-copy-small"><i class="fas fa-copy"></i></button>
                 </div>
                 <div class="pago-item">
-                    <div><p class="label">Monto</p><p id="monto-bs-display" class="value-monto">0.00 Bs</p></div>
+                    <div><p class="label">Monto</p><p id="monto-bs-display" class="value-monto">0 Bs</p></div>
                     <button onclick="copiarMonto()" class="btn-copy-small"><i class="fas fa-copy"></i></button>
                 </div>
                 <button onclick="copiarTodo()" class="btn-copy-all"><i class="fas fa-copy"></i> Copiar todos los datos</button>
             </div>
 
             <div class="mt-6 space-y-3">
-                <input type="text" id="campo-identificador" placeholder="ID DEL JUGADOR" class="input-field font-bold uppercase">
-                <input type="email" id="correo-roblox" placeholder="CORREO DE LA CUENTA" class="input-field font-bold hidden">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="text" id="ref-pago" placeholder="REF (4 DÍG)" class="input-field" maxlength="4">
-                    <input type="text" id="nombre-cliente" placeholder="TU NOMBRE" class="input-field">
+                <div class="relative">
+                    <input type="number" id="campo-identificador" placeholder="ID DEL JUGADOR" 
+                        class="input-field font-bold uppercase" 
+                        oninput="verificarAutomatico(this.value)">
+                    <div id="loading-spinner" class="hidden absolute right-4 top-4">
+                        <i class="fas fa-circle-notch animate-spin text-blue-500"></i>
+                    </div>
                 </div>
+                <p id="nombre-verificado" class="text-blue-400 text-xs font-bold mt-1 ml-2 italic"></p>
+
+                <input type="email" id="correo-roblox" placeholder="CORREO DE LA CUENTA" class="input-field font-bold hidden">
+                <input type="text" id="ref-pago" placeholder="REF (ÚLTIMOS 4 DÍGITOS)" class="input-field" maxlength="4">
+                
                 <button onclick="finalizarYEnviar()" class="btn-action w-full py-5 mt-2 uppercase tracking-widest text-xs">Enviar Pedido <i class="fab fa-whatsapp ml-1"></i></button>
             </div>
         </div>
     </main>
 
     <script>
-        const TASA = 650.00;
+        const TASA = 660.00;
         const TU_WHATSAPP = "584228242411";
+        const API_URL = "https://api-verificador-ff.onrender.com";
         let prodSeleccionado = null;
         let categoriaActiva = "Free Fire";
+        let debounceTimer;
 
         const productosData = {
             "Free Fire": [
@@ -127,9 +133,52 @@
             ]
         };
 
+        // Función para dar formato 2.000 (Puntos para miles, sin decimales)
+        function formatearBs(monto) {
+            return Math.round(monto).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function verificarAutomatico(id) {
+            clearTimeout(debounceTimer);
+            const displayNombre = document.getElementById('nombre-verificado');
+            if (categoriaActiva !== 'Free Fire') return;
+
+            if (id.length >= 8) {
+                displayNombre.innerText = "Verificando ID...";
+                debounceTimer = setTimeout(() => { ejecutarBusqueda(id); }, 1000);
+            } else {
+                displayNombre.innerText = "";
+            }
+        }
+
+        async function ejecutarBusqueda(id) {
+            const displayNombre = document.getElementById('nombre-verificado');
+            const spinner = document.getElementById('loading-spinner');
+            spinner.classList.remove('hidden');
+            displayNombre.innerText = "Consultando nombre...";
+            displayNombre.className = "text-blue-400 text-xs font-bold mt-1 ml-2 italic";
+
+            try {
+                const res = await fetch(`${API_URL}/check/${id}?t=${Date.now()}`);
+                const data = await res.json();
+                if (data.success && data.nickname) {
+                    displayNombre.innerText = `👤 JUGADOR: ${data.nickname}`;
+                    displayNombre.className = "text-green-400 text-xs font-bold mt-1 ml-2 italic";
+                    prodSeleccionado.nickname = data.nickname;
+                } else {
+                    displayNombre.innerText = "❌ ID no encontrado en Pagostore Latam";
+                    displayNombre.className = "text-red-400 text-xs font-bold mt-1 ml-2 italic";
+                }
+            } catch (e) {
+                displayNombre.innerText = "⚠️ La API se está activando, intenta de nuevo...";
+            } finally {
+                spinner.classList.add('hidden');
+            }
+        }
+
         function copiarTexto(t) { navigator.clipboard.writeText(t); alert("Copiado ✅"); }
-        function copiarMonto() { if(prodSeleccionado) { navigator.clipboard.writeText(prodSeleccionado.precioBs.toFixed(2)); alert("Monto Copiado ✅"); } }
-        function copiarTodo() { const t = `Banco: Venezuela (0102)\nTeléfono: 04228241596\nCédula: 32824869\nMonto: ${prodSeleccionado.precioBs.toFixed(2)} Bs`; navigator.clipboard.writeText(t); alert("Datos Copiados ✅"); }
+        function copiarMonto() { if(prodSeleccionado) { navigator.clipboard.writeText(formatearBs(prodSeleccionado.precioBs)); alert("Monto Copiado ✅"); } }
+        function copiarTodo() { const t = `Banco: Venezuela (0102)\nTeléfono: 04228241596\nCédula: 32824869\nMonto: ${formatearBs(prodSeleccionado.precioBs)} Bs`; navigator.clipboard.writeText(t); alert("Datos Copiados ✅"); }
 
         function cambiarCategoria(cat, btn) {
             categoriaActiva = cat;
@@ -137,24 +186,25 @@
             btn.classList.add('active', 'text-white');
             document.getElementById('correo-roblox').classList.toggle('hidden', cat !== 'Roblox');
             document.getElementById('campo-identificador').placeholder = (cat === 'Netflix') ? "NÚMERO DE TELÉFONO" : "ID DEL JUGADOR";
+            document.getElementById('nombre-verificado').innerText = "";
 
             const grid = document.getElementById('grid-productos');
             grid.innerHTML = (productosData[cat] || []).map(item => {
-                const pb = (item.u * TASA).toLocaleString('es-VE', {minimumFractionDigits: 2});
+                const montoBs = item.u * TASA;
                 return `<div class="game-card">
                     <div>
                         <h4 class="product-name mb-1">${item.n}</h4>
-                        <span class="price-bs">${pb} BS</span><span class="price-usd">($${item.u.toFixed(2)})</span>
+                        <span class="price-bs">${formatearBs(montoBs)} BS</span><span class="price-usd">($${item.u.toFixed(2)})</span>
                     </div>
-                    <button onclick="seleccionar('${item.n}', ${item.u * TASA}, ${item.u})" class="btn-action">ELEGIR</button>
+                    <button onclick="seleccionar('${item.n}', ${montoBs}, ${item.u})" class="btn-action">ELEGIR</button>
                 </div>`;
             }).join('');
             document.getElementById('seccion-pago').classList.add('hidden');
         }
 
         function seleccionar(n, pb, u) {
-            prodSeleccionado = { nombre: n, precioBs: pb, usd: u };
-            document.getElementById('monto-bs-display').innerText = pb.toFixed(2) + " Bs";
+            prodSeleccionado = { nombre: n, precioBs: pb, usd: u, nickname: null };
+            document.getElementById('monto-bs-display').innerText = formatearBs(pb) + " Bs";
             document.getElementById('seccion-pago').classList.remove('hidden');
             document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
         }
@@ -162,11 +212,19 @@
         function finalizarYEnviar() {
             const id = document.getElementById('campo-identificador').value;
             const ref = document.getElementById('ref-pago').value;
-            const nom = document.getElementById('nombre-cliente').value;
-            if(!id || !ref || !nom) return alert("⚠️ Completa tus datos");
+            if(!id || !ref) return alert("⚠️ Completa los datos");
 
             let labelId = (categoriaActiva === 'Netflix') ? "TELÉFONO" : "ID";
-            let msg = `*🎮 NUEVA ORDEN*%0A` + `━━━━━━━━━━━━━━%0A` + `🕹️ *JUEGO:* ${categoriaActiva}%0A` + `📌 *PRODUCTO:* ${prodSeleccionado.nombre}%0A` + `💰 *MONTO:* ${prodSeleccionado.precioBs.toFixed(2)} Bs ($${prodSeleccionado.usd.toFixed(2)})%0A` + `📱 *${labelId}:* ${id}%0A` + `🧾 *REF:* ${ref}%0A` + `👤 *CLIENTE:* ${nom}%0A` + `━━━━━━━━━━━━━━`;
+            let nickMsg = prodSeleccionado.nickname ? `%0A👤 *NICK:* ${prodSeleccionado.nickname}` : "";
+
+            let msg = `*🎮 NUEVA ORDEN*%0A` + 
+                      `━━━━━━━━━━━━━━%0A` + 
+                      `🕹️ *JUEGO:* ${categoriaActiva}%0A` + 
+                      `📌 *PRODUCTO:* ${prodSeleccionado.nombre}%0A` + 
+                      `💰 *MONTO:* ${formatearBs(prodSeleccionado.precioBs)} Bs ($${prodSeleccionado.usd.toFixed(2)})%0A` + 
+                      `📱 *${labelId}:* ${id}${nickMsg}%0A` + 
+                      `🧾 *REF:* ${ref}%0A` + 
+                      `━━━━━━━━━━━━━━`;
 
             window.open(`https://wa.me/${TU_WHATSAPP}?text=${msg}`, '_blank');
             if(categoriaActiva !== 'Netflix') {
