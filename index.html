@@ -12,42 +12,50 @@
         body { background-color: #05070a; color: #e2e8f0; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
         .header-font { font-family: 'Orbitron', sans-serif; }
         
-        .pago-card { background: #161b26; border-radius: 20px; border: 1px solid #1e293b; padding: 20px; }
-        .pago-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .label { color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .value { color: white; font-size: 15px; font-weight: 900; }
-        .value-monto { color: #10b981; font-size: 16px; font-weight: 900; }
-        .btn-copy-small { background: #1e293b; border-radius: 10px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
-        .btn-copy-all { background: rgba(249, 115, 22, 0.1); border: 1px solid rgba(249, 115, 22, 0.3); color: #f97316; width: 100%; padding: 14px; border-radius: 15px; font-weight: 900; text-transform: uppercase; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 15px; }
+        #aviso-inicial { display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
+        .aviso-card { background: #111827; border: 2px solid #ef4444; border-radius: 25px; padding: 30px; text-align: center; max-width: 350px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); }
 
-        #modal-ruleta { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 100; backdrop-filter: blur(10px); align-items: center; justify-content: center; }
-        #wheel { width: 260px; height: 260px; border-radius: 50%; border: 6px solid #1e293b; transition: transform 4s cubic-bezier(0.1, 0, 0.2, 1); background: conic-gradient(#2563eb 0deg 60deg, #0f172a 60deg 120deg, #1e293b 120deg 180deg, #0f172a 180deg 240deg, #1e293b 240deg 300deg, #0f172a 300deg 360deg); }
-        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ef4444; z-index: 110; }
+        #modal-ruleta { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 400; backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 20px; }
+        .ruleta-container { position: relative; width: 260px; height: 260px; margin: 0 auto 20px; border: 8px solid #1e293b; border-radius: 50%; overflow: hidden; }
+        #canvas-ruleta { width: 100%; height: 100%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
+        .marcador { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 10; }
 
-        .game-card { background: #0f121a; border: 1px solid #1e293b; border-radius: 18px; margin-bottom: 10px; padding: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .product-name { font-weight: 900; color: white; font-size: 18px; text-transform: uppercase; }
-        .price-bs { color: #3b82f6; font-weight: 900; font-size: 15px; }
-        .price-usd { color: #64748b; font-weight: 700; font-size: 11px; margin-left: 4px; }
-        .btn-action { background: linear-gradient(90deg, #1d4ed8, #3b82f6); color: white; font-weight: 900; padding: 12px 20px; border-radius: 14px; font-size: 10px; }
+        .game-card { background: #0f121a; border: 1px solid #1e293b; border-radius: 18px; margin-bottom: 10px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .product-name { font-weight: 900; color: white; font-size: 14px; text-transform: uppercase; }
+        .btn-action { background: linear-gradient(90deg, #1d4ed8, #3b82f6); color: white; font-weight: 900; padding: 10px 18px; border-radius: 12px; font-size: 10px; }
         
+        .input-field { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 12px; width: 100%; color: white; outline: none; margin-top: 8px; font-size: 14px; }
+        
+        .verificando { color: #f59e0b; font-size: 10px; font-weight: 900; margin-top: 5px; display: none; align-items: center; gap: 5px; }
+        .verificado { color: #10b981; font-size: 10px; font-weight: 900; margin-top: 5px; display: none; align-items: center; gap: 5px; }
+
         .tab-btn { border-bottom: 2px solid transparent; transition: 0.3s; opacity: 0.5; padding-bottom: 5px; font-weight: bold; }
         .tab-btn.active { border-color: #3b82f6; color: #3b82f6; opacity: 1; }
-        .input-field { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 12px; width: 100%; color: white; outline: none; margin-top: 8px; font-size: 14px; }
+
+        #aviso-dinamico { display: none; background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; border-radius: 10px; padding: 10px; margin-bottom: 15px; font-size: 11px; font-weight: 800; color: #f59e0b; text-align: center; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="pb-10">
 
+    <div id="aviso-inicial">
+        <div class="aviso-card">
+            <i class="fas fa-shield-alt text-red-500 text-5xl mb-4"></i>
+            <h2 class="header-font text-white font-black text-xl mb-4 italic uppercase">¡IMPORTANTE!</h2>
+            <p class="text-sm text-gray-300 font-bold mb-6">Verifica tus datos. Errores en ID o correo no tienen reembolso.</p>
+            <button onclick="cerrarAviso()" class="w-full bg-red-600 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest">Aceptar y Entrar</button>
+        </div>
+    </div>
+
     <div id="modal-ruleta">
-        <div class="text-center p-8 bg-[#0a0d14] border border-white/5 rounded-[2.5rem] max-w-sm w-full mx-4 shadow-2xl">
-            <h2 class="header-font text-white font-black text-xl mb-2 italic">¿SUERTE?</h2>
-            <p class="text-[10px] text-gray-400 mb-8 font-bold uppercase tracking-widest">Gira por tu bono de 110💎</p>
-            <div class="relative w-max mx-auto mb-8">
-                <div class="pointer"></div>
-                <div id="wheel"></div>
+        <div class="bg-[#111827] border-2 border-blue-600 rounded-[30px] p-6 text-center max-w-sm w-full">
+            <h2 class="header-font text-white font-black text-xl mb-2 uppercase italic">¡ORDEN ENVIADA!</h2>
+            <p class="text-xs text-blue-400 font-bold mb-4 uppercase">Gira y toma captura a tu premio</p>
+            <div class="ruleta-container">
+                <div class="marcador"></div>
+                <canvas id="canvas-ruleta" width="300" height="300"></canvas>
             </div>
-            <button onclick="girarRuletaFinal()" id="btn-girar-final" class="w-full bg-white text-black py-4 rounded-xl font-black uppercase text-[10px]">Girar Ruleta 🎡</button>
-            <p id="texto-premio" class="mt-4 font-black text-sm"></p>
+            <button id="btn-girar" onclick="girarRuleta()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase text-xs">Girar Ruleta</button>
         </div>
     </div>
 
@@ -63,193 +71,142 @@
     </div>
 
     <main class="max-w-md mx-auto px-4">
+        <div id="aviso-dinamico"></div>
         <div id="grid-productos"></div>
 
         <div id="seccion-pago" class="hidden mt-6">
-            <div class="pago-card shadow-2xl">
-                <div class="pago-item">
-                    <div><p class="label">Banco</p><p class="value">Venezuela (0102)</p></div>
-                    <button onclick="copiarTexto('Venezuela (0102)')" class="btn-copy-small"><i class="fas fa-copy"></i></button>
+            <div class="bg-[#161b26] rounded-2xl border border-white/5 p-5 mb-6">
+                <div class="flex justify-between items-center mb-4 text-[10px] font-black uppercase text-blue-500">
+                    <span>Pago Móvil (0102)</span>
+                    <span>Venezuela</span>
                 </div>
-                <div class="pago-item">
-                    <div><p class="label">Teléfono</p><p class="value">0422-8241596</p></div>
-                    <button onclick="copiarTexto('04228241596')" class="btn-copy-small"><i class="fas fa-copy"></i></button>
-                </div>
-                <div class="pago-item">
-                    <div><p class="label">Cédula</p><p class="value">V-32824869</p></div>
-                    <button onclick="copiarTexto('32824869')" class="btn-copy-small"><i class="fas fa-copy"></i></button>
-                </div>
-                <div class="pago-item">
-                    <div><p class="label">Monto</p><p id="monto-bs-display" class="value-monto">0 Bs</p></div>
-                    <button onclick="copiarMonto()" class="btn-copy-small"><i class="fas fa-copy"></i></button>
-                </div>
-                <button onclick="copiarTodo()" class="btn-copy-all"><i class="fas fa-copy"></i> Copiar todos los datos</button>
-            </div>
-
-            <div class="mt-6 space-y-3">
-                <div class="relative">
-                    <input type="number" id="campo-identificador" placeholder="ID DEL JUGADOR" 
-                        class="input-field font-bold uppercase" 
-                        oninput="verificarAutomatico(this.value)">
-                    <div id="loading-spinner" class="hidden absolute right-4 top-4">
-                        <i class="fas fa-circle-notch animate-spin text-blue-500"></i>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between"><span>Teléfono:</span> <b class="text-white">04228242411</b></div>
+                    <div class="flex justify-between"><span>C.I:</span> <b class="text-white">V-32824869</b></div>
+                    <div class="flex justify-between text-green-400 font-black uppercase pt-2 border-t border-white/5">
+                        <span>Total:</span> <span id="monto-bs-display">0.00 Bs</span>
                     </div>
                 </div>
-                <p id="nombre-verificado" class="text-blue-400 text-xs font-bold mt-1 ml-2 italic"></p>
+            </div>
 
-                <input type="email" id="correo-roblox" placeholder="CORREO DE LA CUENTA" class="input-field font-bold hidden">
-                <input type="text" id="ref-pago" placeholder="REF (ÚLTIMOS 4 DÍGITOS)" class="input-field" maxlength="4">
+            <div class="space-y-3">
+                <div id="campos-dinamicos"></div>
+                <input type="text" id="ref-pago" placeholder="REFERENCIA (4 DÍGITOS)" class="input-field font-bold" maxlength="4">
+                <input type="text" id="input-descuento" placeholder="CÓDIGO" class="input-field border-dashed border-blue-500/50 uppercase font-bold" oninput="aplicarDescuento()">
                 
-                <button onclick="finalizarYEnviar()" class="btn-action w-full py-5 mt-2 uppercase tracking-widest text-xs">Enviar Pedido <i class="fab fa-whatsapp ml-1"></i></button>
+                <button onclick="finalizarYEnviar()" class="btn-action w-full py-5 mt-4 uppercase tracking-widest text-xs">Finalizar en WhatsApp <i class="fab fa-whatsapp ml-1"></i></button>
             </div>
         </div>
     </main>
 
     <script>
-        const TASA = 660.00;
+        const TASA = 650.00;
         const TU_WHATSAPP = "584228242411";
-        const API_URL = "https://api-verificador-ff.onrender.com";
         let prodSeleccionado = null;
         let categoriaActiva = "Free Fire";
-        let debounceTimer;
+        let timeoutVerificacion;
+        let precioFinal = 0;
 
-        const productosData = {
-            "Free Fire": [
-                { n: "110 DIAMANTES 💎", u: 0.97 }, { n: "220 DIAMANTES 💎", u: 1.96 },
-                { n: "341 DIAMANTES 💎", u: 3.20 }, { n: "572 DIAMANTES 💎", u: 4.89 },
-                { n: "1166 DIAMANTES 💎", u: 9.00 }, { n: "2398 DIAMANTES 💎", u: 19.00 },
-                { n: "6160 DIAMANTES 💎", u: 48.00 },
-                { n: "T. SEMANAL BÁSICA", u: 0.73 }, { n: "T. SEMANAL", u: 2.50 },
-                { n: "T. MENSUAL", u: 11.00 }, { n: "PASE BOOYAH", u: 3.50 }, { n: "PASE DE NIVEL", u: 4.00 }
-            ],
-            "Netflix": [{ n: "NETFLIX BÁSICO 📺", u: 4.50 }],
+        const productos = {
+            "Free Fire": [{ n: "110 DIAMANTES 💎", u: 0.97 }, { n: "220 DIAMANTES 💎", u: 1.96 }, { n: "572 DIAMANTES 💎", u: 4.89 }, { n: "T. SEMANAL", u: 2.50 }, { n: "T. MENSUAL", u: 11.00 }],
+            "Netflix": [{ n: "PANTALLA NETFLIX 📺", u: 4.50 }],
             "Roblox": [{ n: "400 ROBUX 🧸", u: 5.00 }, { n: "800 ROBUX 🧸", u: 10.00 }],
             "Block Strike": [
-                { n: "51 MONEDAS 🪙", u: 0.52 }, { n: "105 MONEDAS 🪙", u: 1.00 },
-                { n: "320 MONEDAS 🪙", u: 2.95 }, { n: "540 MONEDAS 🪙", u: 4.90 },
-                { n: "1100 MONEDAS 🪙", u: 10.00 }, { n: "2260 MONEDAS 🪙", u: 20.00 },
-                { n: "5800 MONEDAS 🪙", u: 48.00 }, { n: "PASE ELITE 🏆", u: 4.15 },
-                { n: "ELITE PLUS 🏆", u: 10.00 }, { n: "PASÉ DE MEJORA", u: 2.10 }
+                { n: "51 MONEDAS 🪙", u: 0.52 }, { n: "105 MONEDAS 🪙", u: 1.00 }, { n: "320 MONEDAS 🪙", u: 2.95 }, 
+                { n: "540 MONEDAS 🪙", u: 4.90 }, { n: "1100 MONEDAS 🪙", u: 10.00 }, { n: "2260 MONEDAS 🪙", u: 20.00 },
+                { n: "5800 MONEDAS 🪙", u: 48.00 }, { n: "PASE ELITE 🏆", u: 4.15 }, { n: "PASE ELITE PLUS 🏆", u: 10.00 },
+                { n: "PASE DE MEJORA ✨", u: 2.10 }
             ]
         };
 
-        // Función para dar formato 2.000 (Puntos para miles, sin decimales)
-        function formatearBs(monto) {
-            return Math.round(monto).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        }
-
-        function verificarAutomatico(id) {
-            clearTimeout(debounceTimer);
-            const displayNombre = document.getElementById('nombre-verificado');
-            if (categoriaActiva !== 'Free Fire') return;
-
-            if (id.length >= 8) {
-                displayNombre.innerText = "Verificando ID...";
-                debounceTimer = setTimeout(() => { ejecutarBusqueda(id); }, 1000);
-            } else {
-                displayNombre.innerText = "";
-            }
-        }
-
-        async function ejecutarBusqueda(id) {
-            const displayNombre = document.getElementById('nombre-verificado');
-            const spinner = document.getElementById('loading-spinner');
-            spinner.classList.remove('hidden');
-            displayNombre.innerText = "Consultando nombre...";
-            displayNombre.className = "text-blue-400 text-xs font-bold mt-1 ml-2 italic";
-
-            try {
-                const res = await fetch(`${API_URL}/check/${id}?t=${Date.now()}`);
-                const data = await res.json();
-                if (data.success && data.nickname) {
-                    displayNombre.innerText = `👤 JUGADOR: ${data.nickname}`;
-                    displayNombre.className = "text-green-400 text-xs font-bold mt-1 ml-2 italic";
-                    prodSeleccionado.nickname = data.nickname;
-                } else {
-                    displayNombre.innerText = "❌ ID no encontrado en Pagostore Latam";
-                    displayNombre.className = "text-red-400 text-xs font-bold mt-1 ml-2 italic";
-                }
-            } catch (e) {
-                displayNombre.innerText = "⚠️ La API se está activando, intenta de nuevo...";
-            } finally {
-                spinner.classList.add('hidden');
-            }
-        }
-
-        function copiarTexto(t) { navigator.clipboard.writeText(t); alert("Copiado ✅"); }
-        function copiarMonto() { if(prodSeleccionado) { navigator.clipboard.writeText(formatearBs(prodSeleccionado.precioBs)); alert("Monto Copiado ✅"); } }
-        function copiarTodo() { const t = `Banco: Venezuela (0102)\nTeléfono: 04228241596\nCédula: 32824869\nMonto: ${formatearBs(prodSeleccionado.precioBs)} Bs`; navigator.clipboard.writeText(t); alert("Datos Copiados ✅"); }
-
         function cambiarCategoria(cat, btn) {
             categoriaActiva = cat;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active', 'text-white'));
-            btn.classList.add('active', 'text-white');
-            document.getElementById('correo-roblox').classList.toggle('hidden', cat !== 'Roblox');
-            document.getElementById('campo-identificador').placeholder = (cat === 'Netflix') ? "NÚMERO DE TELÉFONO" : "ID DEL JUGADOR";
-            document.getElementById('nombre-verificado').innerText = "";
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const aviso = document.getElementById('aviso-dinamico');
+            const campos = document.getElementById('campos-dinamicos');
+            
+            if(cat === 'Roblox') {
+                aviso.style.display = 'block'; aviso.innerText = "⚠️ RECARGA POR CUENTA (CORREO Y CLAVE)";
+                campos.innerHTML = `
+                    <input type="text" id="d1" placeholder="CORREO" class="input-field font-bold w-full" oninput="validar()">
+                    <input type="password" id="d2" placeholder="CONTRASEÑA" class="input-field font-bold w-full mt-2">`;
+            } else if(cat === 'Netflix') {
+                aviso.style.display = 'block'; aviso.innerText = "📺 INDICA TU NÚMERO DE TELÉFONO";
+                campos.innerHTML = `<input type="text" id="d1" placeholder="NÚMERO DE TELÉFONO" class="input-field font-bold w-full" oninput="validar()">`;
+            } else {
+                aviso.style.display = 'none';
+                campos.innerHTML = `<input type="text" id="d1" placeholder="ID DEL JUGADOR" class="input-field font-bold w-full" oninput="validar()">`;
+            }
+            campos.innerHTML += `<div id="v-b" class="verificando uppercase">🔍 Verificando...</div><div id="v-l" class="verificado uppercase">✅ Verificado</div>`;
 
             const grid = document.getElementById('grid-productos');
-            grid.innerHTML = (productosData[cat] || []).map(item => {
-                const montoBs = item.u * TASA;
-                return `<div class="game-card">
+            grid.innerHTML = productos[cat].map(i => `
+                <div class="game-card">
                     <div>
-                        <h4 class="product-name mb-1">${item.n}</h4>
-                        <span class="price-bs">${formatearBs(montoBs)} BS</span><span class="price-usd">($${item.u.toFixed(2)})</span>
+                        <h4 class="product-name mb-1">${i.n}</h4>
+                        <span class="text-blue-500 font-black">${(i.u * TASA).toFixed(2)} BS</span>
                     </div>
-                    <button onclick="seleccionar('${item.n}', ${montoBs}, ${item.u})" class="btn-action">ELEGIR</button>
-                </div>`;
-            }).join('');
+                    <button onclick="seleccionar('${i.n}', ${i.u * TASA})" class="btn-action">ELEGIR</button>
+                </div>`).join('');
             document.getElementById('seccion-pago').classList.add('hidden');
         }
 
-        function seleccionar(n, pb, u) {
-            prodSeleccionado = { nombre: n, precioBs: pb, usd: u, nickname: null };
-            document.getElementById('monto-bs-display').innerText = formatearBs(pb) + " Bs";
+        function seleccionar(n, pb) {
+            prodSeleccionado = { nombre: n, precio: pb };
+            precioFinal = pb;
+            document.getElementById('monto-bs-display').innerText = pb.toFixed(2) + " Bs";
             document.getElementById('seccion-pago').classList.remove('hidden');
             document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function finalizarYEnviar() {
-            const id = document.getElementById('campo-identificador').value;
-            const ref = document.getElementById('ref-pago').value;
-            if(!id || !ref) return alert("⚠️ Completa los datos");
-
-            let labelId = (categoriaActiva === 'Netflix') ? "TELÉFONO" : "ID";
-            let nickMsg = prodSeleccionado.nickname ? `%0A👤 *NICK:* ${prodSeleccionado.nickname}` : "";
-
-            let msg = `*🎮 NUEVA ORDEN*%0A` + 
-                      `━━━━━━━━━━━━━━%0A` + 
-                      `🕹️ *JUEGO:* ${categoriaActiva}%0A` + 
-                      `📌 *PRODUCTO:* ${prodSeleccionado.nombre}%0A` + 
-                      `💰 *MONTO:* ${formatearBs(prodSeleccionado.precioBs)} Bs ($${prodSeleccionado.usd.toFixed(2)})%0A` + 
-                      `📱 *${labelId}:* ${id}${nickMsg}%0A` + 
-                      `🧾 *REF:* ${ref}%0A` + 
-                      `━━━━━━━━━━━━━━`;
-
-            window.open(`https://wa.me/${TU_WHATSAPP}?text=${msg}`, '_blank');
-            if(categoriaActiva !== 'Netflix') {
-                setTimeout(() => { document.getElementById('modal-ruleta').style.display = 'flex'; }, 1000);
+        function validar() {
+            const b = document.getElementById('v-b'), l = document.getElementById('v-l'), v = document.getElementById('d1').value;
+            b.style.display = 'none'; l.style.display = 'none';
+            clearTimeout(timeoutVerificacion);
+            if(v.length >= 8) {
+                b.style.display = 'flex';
+                timeoutVerificacion = setTimeout(() => { b.style.display = 'none'; l.style.display = 'flex'; }, 1500);
             }
         }
 
-        function girarRuletaFinal() {
-            const wheel = document.getElementById('wheel');
-            const res = document.getElementById('texto-premio');
-            const randomGiro = Math.floor(Math.random() * 360) + 1440; 
-            wheel.style.transform = `rotate(${randomGiro}deg)`;
-            document.getElementById('btn-girar-final').disabled = true;
+        function aplicarDescuento() {
+            const input = document.getElementById('input-descuento').value.toUpperCase();
+            precioFinal = (input === "GAMES") ? prodSeleccionado.precio * 0.97 : prodSeleccionado.precio;
+            document.getElementById('monto-bs-display').innerText = precioFinal.toFixed(2) + " Bs";
+        }
 
-            setTimeout(() => {
-                const finalDegree = randomGiro % 360;
-                if (finalDegree >= 300 || finalDegree <= 60) {
-                    res.innerText = "🎁 ¡GANASTE 110 DIAMANTES!";
-                    res.className = "mt-4 font-black text-sm text-green-400 animate-bounce";
-                } else {
-                    res.innerText = "❌ No hubo suerte esta vez";
-                    res.className = "mt-4 font-black text-sm text-gray-500";
-                }
-                setTimeout(() => { location.reload(); }, 4000);
-            }, 4000);
+        function finalizarYEnviar() {
+            const d1 = document.getElementById('d1').value, ref = document.getElementById('ref-pago').value;
+            if(!d1 || !ref) return alert("⚠️ Completa los datos");
+            
+            let extra = (categoriaActiva === 'Roblox') ? `\n🔑 Pass: ${document.getElementById('d2').value}` : "";
+            let msg = `*NUEVA ORDEN*\nJuego: ${categoriaActiva}\nProd: ${prodSeleccionado.nombre}\nMonto: ${precioFinal.toFixed(2)} Bs\nDato: ${d1}${extra}\nRef: ${ref}`;
+            
+            window.open(`https://wa.me/${TU_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+            document.getElementById('modal-ruleta').style.display = 'flex';
+            dibujarRuleta();
+        }
+
+        function cerrarAviso() { document.getElementById('aviso-inicial').style.display = 'none'; }
+
+        const canvas = document.getElementById('canvas-ruleta');
+        const ctx = canvas.getContext('2d');
+        function dibujarRuleta() {
+            const opts = ["REGALO", "SIGUE", "PREMIO", "SIGUE", "BONO", "SIGUE"];
+            const colors = ["#1d4ed8", "#111827", "#3b82f6", "#111827", "#1d4ed8", "#111827"];
+            opts.forEach((opt, i) => {
+                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(150,150);
+                ctx.arc(150,150,150, i * Math.PI/3, (i+1) * Math.PI/3); ctx.fill();
+                ctx.save(); ctx.translate(150,150); ctx.rotate(i*Math.PI/3 + Math.PI/6);
+                ctx.fillStyle="white"; ctx.font="bold 12px Orbitron"; ctx.fillText(opt, 60, 5); ctx.restore();
+            });
+        }
+        function girarRuleta() {
+            const r = Math.floor(3000 + Math.random() * 2000);
+            canvas.style.transform = `rotate(${r}deg)`;
+            setTimeout(() => alert("¡Captura tu premio y envíalo al WhatsApp! 🎁"), 4000);
         }
 
         window.onload = () => cambiarCategoria('Free Fire', document.querySelector('.tab-btn'));
