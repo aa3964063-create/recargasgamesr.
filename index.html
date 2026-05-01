@@ -3,213 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>RECARGAS GAMES | Premium Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Admin - Recargas Games</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Rajdhani:wght@500;700&display=swap');
-        
-        body { background-color: #05070a; color: #e2e8f0; font-family: 'Rajdhani', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .header-font { font-family: 'Orbitron', sans-serif; }
-        
-        #aviso-inicial { display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 500; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; }
-        .aviso-card { background: #111827; border: 2px solid #ef4444; border-radius: 25px; padding: 30px; text-align: center; max-width: 350px; box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); }
-
-        #modal-ruleta { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 400; backdrop-filter: blur(10px); align-items: center; justify-content: center; padding: 20px; }
-        .ruleta-container { position: relative; width: 260px; height: 260px; margin: 0 auto 20px; border: 8px solid #1e293b; border-radius: 50%; overflow: hidden; }
-        #canvas-ruleta { width: 100%; height: 100%; transition: transform 4s cubic-bezier(0.15, 0, 0.15, 1); }
-        .marcador { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #ef4444; z-index: 10; }
-
-        .game-card { background: #0f121a; border: 1px solid #1e293b; border-radius: 18px; margin-bottom: 10px; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .product-name { font-weight: 900; color: white; font-size: 14px; text-transform: uppercase; }
-        .btn-action { background: linear-gradient(90deg, #1d4ed8, #3b82f6); color: white; font-weight: 900; padding: 10px 18px; border-radius: 12px; font-size: 10px; }
-        
-        .input-field { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 14px; border-radius: 12px; width: 100%; color: white; outline: none; margin-top: 8px; font-size: 14px; }
-        
-        .verificando { color: #f59e0b; font-size: 10px; font-weight: 900; margin-top: 5px; display: none; align-items: center; gap: 5px; }
-        .verificado { color: #10b981; font-size: 10px; font-weight: 900; margin-top: 5px; display: none; align-items: center; gap: 5px; }
-
-        .tab-btn { border-bottom: 2px solid transparent; transition: 0.3s; opacity: 0.5; padding-bottom: 5px; font-weight: bold; }
-        .tab-btn.active { border-color: #3b82f6; color: #3b82f6; opacity: 1; }
-
-        #aviso-dinamico { display: none; background: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; border-radius: 10px; padding: 10px; margin-bottom: 15px; font-size: 11px; font-weight: 800; color: #f59e0b; text-align: center; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* Login */
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: none;
+            background: #0f172a;
+            color: white;
+        }
+        .login-box button {
+            background: #4ecdc4;
+            color: #0f172a;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        /* Header */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .admin-header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .search-box {
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px;
+            min-width: 220px;
+            outline: none;
+        }
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+        /* Estadísticas */
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            border-bottom: 3px solid #4ecdc4;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+        /* Filtros */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #1e293b;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn.active {
+            background: #4ecdc4;
+            color: #0f172a;
+        }
+        /* Grid de tarjetas */
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+        .order-card {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.2s;
+            border-left: 5px solid;
+        }
+        .order-card.pendiente { border-left-color: #fbbf24; }
+        .order-card.verificando { border-left-color: #4ecdc4; }
+        .order-card.completada { border-left-color: #10b981; opacity: 0.8; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .order-id {
+            font-weight: bold;
+            font-family: monospace;
+            background: #0f172a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .status-pendiente { background: #fbbf24; color: #0f172a; }
+        .status-verificando { background: #4ecdc4; color: #0f172a; }
+        .status-completada { background: #10b981; color: white; }
+        .order-product {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .order-detail span:first-child { font-weight: bold; color: #cbd5e1; }
+        .order-ref {
+            font-family: monospace;
+            background: #0f172a;
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .confirm-btn {
+            background: #4ecdc4;
+            color: #0f172a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+        }
+        .verify-btn {
+            background: #fbbf24;
+            color: #0f172a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+        }
+        .completed-badge {
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: #94a3b8;
+        }
+        @media (max-width: 600px) {
+            .orders-grid { grid-template-columns: 1fr; }
+            .admin-header { flex-direction: column; align-items: stretch; }
+        }
     </style>
 </head>
-<body class="pb-10">
-
-    <div id="aviso-inicial">
-        <div class="aviso-card">
-            <i class="fas fa-shield-alt text-red-500 text-5xl mb-4"></i>
-            <h2 class="header-font text-white font-black text-xl mb-4 italic uppercase">¡IMPORTANTE!</h2>
-            <p class="text-sm text-gray-300 font-bold mb-6">Verifica tus datos. Errores en ID o correo no tienen reembolso.</p>
-            <button onclick="cerrarAviso()" class="w-full bg-red-600 text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest">Aceptar y Entrar</button>
+<body>
+    <div id="adminApp">
+        <!-- Pantalla de login -->
+        <div v-if="!authenticated" class="login-box">
+            <h2>🔐 Panel Admin</h2>
+            <input type="password" v-model="password" placeholder="Contraseña" @keyup.enter="login">
+            <button @click="login">Ingresar</button>
         </div>
-    </div>
 
-    <div id="modal-ruleta">
-        <div class="bg-[#111827] border-2 border-blue-600 rounded-[30px] p-6 text-center max-w-sm w-full">
-            <h2 class="header-font text-white font-black text-xl mb-2 uppercase italic">¡ORDEN ENVIADA!</h2>
-            <p class="text-xs text-blue-400 font-bold mb-4 uppercase">Gira y toma captura a tu premio</p>
-            <div class="ruleta-container">
-                <div class="marcador"></div>
-                <canvas id="canvas-ruleta" width="300" height="300"></canvas>
-            </div>
-            <button id="btn-girar" onclick="girarRuleta()" class="w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase text-xs">Girar Ruleta</button>
-        </div>
-    </div>
-
-    <nav class="sticky top-0 z-50 bg-[#05070a]/90 border-b border-white/5 backdrop-blur-md px-6 py-5 flex justify-center">
-        <h1 class="header-font text-lg font-black italic text-white uppercase tracking-tighter">Recargas<span class="text-blue-500">Games</span></h1>
-    </nav>
-
-    <div class="flex overflow-x-auto gap-6 px-6 py-4 bg-[#0a0d14] border-b border-white/5 no-scrollbar mb-4">
-        <button onclick="cambiarCategoria('Free Fire', this)" class="tab-btn active text-[11px] uppercase">Free Fire</button>
-        <button onclick="cambiarCategoria('Netflix', this)" class="tab-btn text-[11px] uppercase">Netflix</button>
-        <button onclick="cambiarCategoria('Roblox', this)" class="tab-btn text-[11px] uppercase">Roblox</button>
-        <button onclick="cambiarCategoria('Block Strike', this)" class="tab-btn text-[11px] uppercase">Block Strike</button>
-    </div>
-
-    <main class="max-w-md mx-auto px-4">
-        <div id="aviso-dinamico"></div>
-        <div id="grid-productos"></div>
-
-        <div id="seccion-pago" class="hidden mt-6">
-            <div class="bg-[#161b26] rounded-2xl border border-white/5 p-5 mb-6">
-                <div class="flex justify-between items-center mb-4 text-[10px] font-black uppercase text-blue-500">
-                    <span>Pago Móvil (0102)</span>
-                    <span>Venezuela</span>
+        <!-- Panel principal -->
+        <div v-else class="container">
+            <div class="admin-header">
+                <h1>📋 GESTIÓN DE VENTAS</h1>
+                <div class="search-box">
+                    🔍 <input type="text" v-model="searchText" placeholder="Buscar por ID o Referencia...">
                 </div>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between"><span>Teléfono:</span> <b class="text-white">04228242411</b></div>
-                    <div class="flex justify-between"><span>C.I:</span> <b class="text-white">V-32824869</b></div>
-                    <div class="flex justify-between text-green-400 font-black uppercase pt-2 border-t border-white/5">
-                        <span>Total:</span> <span id="monto-bs-display">0.00 Bs</span>
+                <button class="logout-btn" @click="logout">🚪 Salir</button>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats">
+                <div class="stat-card"><div class="stat-number">{{ total }}</div><div class="stat-label">Total Pedidos</div></div>
+                <div class="stat-card"><div class="stat-number">{{ pendientes }}</div><div class="stat-label">Pendientes</div></div>
+                <div class="stat-card"><div class="stat-number">{{ verificando }}</div><div class="stat-label">En Verificación</div></div>
+                <div class="stat-card"><div class="stat-number">{{ completadas }}</div><div class="stat-label">Completadas</div></div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <div v-for="f in ['Todos', 'Pendiente', 'Verificando', 'Completada']" :key="f"
+                     :class="['filter-btn', { active: filtro === f }]" @click="filtro = f">
+                    {{ f }}
+                </div>
+            </div>
+
+            <!-- Grid de pedidos -->
+            <div class="orders-grid">
+                <div v-for="pedido in pedidosFiltrados" :key="pedido.id" 
+                     :class="['order-card', pedido.estado.toLowerCase()]">
+                    <div class="card-header">
+                        <span class="order-id">#{{ pedido.id.slice(-8) }}</span>
+                        <span :class="['order-status', 'status-' + pedido.estado.toLowerCase()]">
+                            {{ pedido.estado === 'Pendiente' ? '⏳ PENDIENTE' : (pedido.estado === 'Verificando' ? '🔄 EN VERIFICACIÓN' : '✅ COMPLETADA') }}
+                        </span>
+                    </div>
+                    <div class="order-product">{{ pedido.juego }} - {{ pedido.servicio }}</div>
+                    <div class="order-detail"><span>👤 ID/Usuario:</span><span>{{ pedido.usuario }}</span></div>
+                    <div class="order-detail"><span>💰 Monto:</span><span>{{ pedido.monto }} Bs</span></div>
+                    <div class="order-detail"><span>📅 Fecha:</span><span>{{ formatDate(pedido.fecha) }}</span></div>
+                    <div class="order-detail"><span>🏦 Referencia:</span><span class="order-ref">{{ pedido.referencia }}</span></div>
+                    
+                    <div class="card-actions" v-if="pedido.estado !== 'Completada'">
+                        <button v-if="pedido.estado === 'Pendiente'" class="verify-btn" @click="cambiarEstado(pedido.id, 'Verificando')">
+                            🔍 CONFIRMAR PEDIDO
+                        </button>
+                        <button v-if="pedido.estado === 'Verificando'" class="confirm-btn" @click="cambiarEstado(pedido.id, 'Completada')">
+                            ✅ MARCAR ENTREGADO
+                        </button>
+                    </div>
+                    <div v-else class="completed-badge">
+                        ✔ PEDIDO ENTREGADO
                     </div>
                 </div>
-            </div>
-
-            <div class="space-y-3">
-                <div id="campos-dinamicos"></div>
-                <input type="text" id="ref-pago" placeholder="REFERENCIA (4 DÍGITOS)" class="input-field font-bold" maxlength="4">
-                <input type="text" id="input-descuento" placeholder="CÓDIGO" class="input-field border-dashed border-blue-500/50 uppercase font-bold" oninput="aplicarDescuento()">
-                
-                <button onclick="finalizarYEnviar()" class="btn-action w-full py-5 mt-4 uppercase tracking-widest text-xs">Finalizar en WhatsApp <i class="fab fa-whatsapp ml-1"></i></button>
+                <div v-if="pedidosFiltrados.length === 0" class="no-results">
+                    No hay pedidos que coincidan con la búsqueda o filtro.
+                </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <script>
-        const TASA = 650.00;
-        const TU_WHATSAPP = "584228242411";
-        let prodSeleccionado = null;
-        let categoriaActiva = "Free Fire";
-        let timeoutVerificacion;
-        let precioFinal = 0;
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        const productos = {
-            "Free Fire": [{ n: "110 DIAMANTES 💎", u: 0.97 }, { n: "220 DIAMANTES 💎", u: 1.96 }, { n: "572 DIAMANTES 💎", u: 4.89 }, { n: "T. SEMANAL", u: 2.50 }, { n: "T. MENSUAL", u: 11.00 }],
-            "Netflix": [{ n: "PANTALLA NETFLIX 📺", u: 4.50 }],
-            "Roblox": [{ n: "400 ROBUX 🧸", u: 5.00 }, { n: "800 ROBUX 🧸", u: 10.00 }],
-            "Block Strike": [
-                { n: "51 MONEDAS 🪙", u: 0.52 }, { n: "105 MONEDAS 🪙", u: 1.00 }, { n: "320 MONEDAS 🪙", u: 2.95 }, 
-                { n: "540 MONEDAS 🪙", u: 4.90 }, { n: "1100 MONEDAS 🪙", u: 10.00 }, { n: "2260 MONEDAS 🪙", u: 20.00 },
-                { n: "5800 MONEDAS 🪙", u: 48.00 }, { n: "PASE ELITE 🏆", u: 4.15 }, { n: "PASE ELITE PLUS 🏆", u: 10.00 },
-                { n: "PASE DE MEJORA ✨", u: 2.10 }
-            ]
+        const firebaseConfig = {
+            apiKey: "AIzaSyCGkhRz8Go1mc4EEKWfs_t7WUdPTV-ELcY",
+            authDomain: "recargas-gamers-bcdaa.firebaseapp.com",
+            projectId: "recargas-gamers-bcdaa",
+            storageBucket: "recargas-gamers-bcdaa.firebasestorage.app",
+            messagingSenderId: "322658892724",
+            appId: "1:322658892724:web:a60d1c9c1b9825f72d50e1"
         };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        function cambiarCategoria(cat, btn) {
-            categoriaActiva = cat;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            const aviso = document.getElementById('aviso-dinamico');
-            const campos = document.getElementById('campos-dinamicos');
-            
-            if(cat === 'Roblox') {
-                aviso.style.display = 'block'; aviso.innerText = "⚠️ RECARGA POR CUENTA (CORREO Y CLAVE)";
-                campos.innerHTML = `
-                    <input type="text" id="d1" placeholder="CORREO" class="input-field font-bold w-full" oninput="validar()">
-                    <input type="password" id="d2" placeholder="CONTRASEÑA" class="input-field font-bold w-full mt-2">`;
-            } else if(cat === 'Netflix') {
-                aviso.style.display = 'block'; aviso.innerText = "📺 INDICA TU NÚMERO DE TELÉFONO";
-                campos.innerHTML = `<input type="text" id="d1" placeholder="NÚMERO DE TELÉFONO" class="input-field font-bold w-full" oninput="validar()">`;
-            } else {
-                aviso.style.display = 'none';
-                campos.innerHTML = `<input type="text" id="d1" placeholder="ID DEL JUGADOR" class="input-field font-bold w-full" oninput="validar()">`;
+        const ADMIN_PASSWORD = "admin123"; // Cámbiala por la que quieras
+
+        new Vue({
+            el: '#adminApp',
+            data: {
+                authenticated: false,
+                password: '',
+                pedidos: [],
+                filtro: 'Todos',
+                searchText: ''
+            },
+            computed: {
+                total() { return this.pedidos.length; },
+                pendientes() { return this.pedidos.filter(p => p.estado === 'Pendiente').length; },
+                verificando() { return this.pedidos.filter(p => p.estado === 'Verificando').length; },
+                completadas() { return this.pedidos.filter(p => p.estado === 'Completada').length; },
+                pedidosFiltrados() {
+                    let result = this.pedidos;
+                    if (this.filtro !== 'Todos') {
+                        result = result.filter(p => p.estado === this.filtro);
+                    }
+                    if (this.searchText.trim()) {
+                        const term = this.searchText.toLowerCase();
+                        result = result.filter(p => 
+                            p.id.toLowerCase().includes(term) || 
+                            p.referencia?.toLowerCase().includes(term) ||
+                            p.usuario?.toLowerCase().includes(term)
+                        );
+                    }
+                    return result;
+                }
+            },
+            methods: {
+                login() {
+                    if (this.password === ADMIN_PASSWORD) {
+                        this.authenticated = true;
+                        this.cargarPedidos();
+                    } else {
+                        alert('Contraseña incorrecta');
+                    }
+                },
+                logout() {
+                    this.authenticated = false;
+                    this.pedidos = [];
+                    this.searchText = '';
+                },
+                cargarPedidos() {
+                    const q = query(collection(db, "ventas"), orderBy("fecha", "desc"));
+                    onSnapshot(q, (snapshot) => {
+                        this.pedidos = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data(),
+                            fecha: doc.data().fecha?.toDate() || new Date()
+                        }));
+                    });
+                },
+                async cambiarEstado(id, nuevoEstado) {
+                    const docRef = doc(db, "ventas", id);
+                    await updateDoc(docRef, { estado: nuevoEstado });
+                },
+                formatDate(date) {
+                    if (!date) return '--/--/----';
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} - ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+                }
             }
-            campos.innerHTML += `<div id="v-b" class="verificando uppercase">🔍 Verificando...</div><div id="v-l" class="verificado uppercase">✅ Verificado</div>`;
-
-            const grid = document.getElementById('grid-productos');
-            grid.innerHTML = productos[cat].map(i => `
-                <div class="game-card">
-                    <div>
-                        <h4 class="product-name mb-1">${i.n}</h4>
-                        <span class="text-blue-500 font-black">${(i.u * TASA).toFixed(2)} BS</span>
-                    </div>
-                    <button onclick="seleccionar('${i.n}', ${i.u * TASA})" class="btn-action">ELEGIR</button>
-                </div>`).join('');
-            document.getElementById('seccion-pago').classList.add('hidden');
-        }
-
-        function seleccionar(n, pb) {
-            prodSeleccionado = { nombre: n, precio: pb };
-            precioFinal = pb;
-            document.getElementById('monto-bs-display').innerText = pb.toFixed(2) + " Bs";
-            document.getElementById('seccion-pago').classList.remove('hidden');
-            document.getElementById('seccion-pago').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function validar() {
-            const b = document.getElementById('v-b'), l = document.getElementById('v-l'), v = document.getElementById('d1').value;
-            b.style.display = 'none'; l.style.display = 'none';
-            clearTimeout(timeoutVerificacion);
-            if(v.length >= 8) {
-                b.style.display = 'flex';
-                timeoutVerificacion = setTimeout(() => { b.style.display = 'none'; l.style.display = 'flex'; }, 1500);
-            }
-        }
-
-        function aplicarDescuento() {
-            const input = document.getElementById('input-descuento').value.toUpperCase();
-            precioFinal = (input === "GAMES") ? prodSeleccionado.precio * 0.97 : prodSeleccionado.precio;
-            document.getElementById('monto-bs-display').innerText = precioFinal.toFixed(2) + " Bs";
-        }
-
-        function finalizarYEnviar() {
-            const d1 = document.getElementById('d1').value, ref = document.getElementById('ref-pago').value;
-            if(!d1 || !ref) return alert("⚠️ Completa los datos");
-            
-            let extra = (categoriaActiva === 'Roblox') ? `\n🔑 Pass: ${document.getElementById('d2').value}` : "";
-            let msg = `*NUEVA ORDEN*\nJuego: ${categoriaActiva}\nProd: ${prodSeleccionado.nombre}\nMonto: ${precioFinal.toFixed(2)} Bs\nDato: ${d1}${extra}\nRef: ${ref}`;
-            
-            window.open(`https://wa.me/${TU_WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
-            document.getElementById('modal-ruleta').style.display = 'flex';
-            dibujarRuleta();
-        }
-
-        function cerrarAviso() { document.getElementById('aviso-inicial').style.display = 'none'; }
-
-        const canvas = document.getElementById('canvas-ruleta');
-        const ctx = canvas.getContext('2d');
-        function dibujarRuleta() {
-            const opts = ["REGALO", "SIGUE", "PREMIO", "SIGUE", "BONO", "SIGUE"];
-            const colors = ["#1d4ed8", "#111827", "#3b82f6", "#111827", "#1d4ed8", "#111827"];
-            opts.forEach((opt, i) => {
-                ctx.beginPath(); ctx.fillStyle = colors[i]; ctx.moveTo(150,150);
-                ctx.arc(150,150,150, i * Math.PI/3, (i+1) * Math.PI/3); ctx.fill();
-                ctx.save(); ctx.translate(150,150); ctx.rotate(i*Math.PI/3 + Math.PI/6);
-                ctx.fillStyle="white"; ctx.font="bold 12px Orbitron"; ctx.fillText(opt, 60, 5); ctx.restore();
-            });
-        }
-        function girarRuleta() {
-            const r = Math.floor(3000 + Math.random() * 2000);
-            canvas.style.transform = `rotate(${r}deg)`;
-            setTimeout(() => alert("¡Captura tu premio y envíalo al WhatsApp! 🎁"), 4000);
-        }
-
-        window.onload = () => cambiarCategoria('Free Fire', document.querySelector('.tab-btn'));
+        });
     </script>
 </body>
 </html>
