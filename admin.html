@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Admin - Recargas Games</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        /* Login */
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 10px;
+            border: none;
+            background: #0f172a;
+            color: white;
+        }
+        .login-box button {
+            background: #4ecdc4;
+            color: #0f172a;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        /* Header */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .admin-header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .search-box {
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 8px;
+            min-width: 220px;
+            outline: none;
+        }
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .logout-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+        /* Estadísticas */
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            border-bottom: 3px solid #4ecdc4;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+        /* Filtros */
+        .filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #1e293b;
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .filter-btn.active {
+            background: #4ecdc4;
+            color: #0f172a;
+        }
+        /* Grid de tarjetas */
+        .orders-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 20px;
+        }
+        .order-card {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.2s;
+            border-left: 5px solid;
+        }
+        .order-card.pendiente { border-left-color: #fbbf24; }
+        .order-card.verificando { border-left-color: #4ecdc4; }
+        .order-card.completada { border-left-color: #10b981; opacity: 0.8; }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .order-id {
+            font-weight: bold;
+            font-family: monospace;
+            background: #0f172a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .order-status {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .status-pendiente { background: #fbbf24; color: #0f172a; }
+        .status-verificando { background: #4ecdc4; color: #0f172a; }
+        .status-completada { background: #10b981; color: white; }
+        .order-product {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0 5px;
+        }
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+        .order-detail span:first-child { font-weight: bold; color: #cbd5e1; }
+        .order-ref {
+            font-family: monospace;
+            background: #0f172a;
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .confirm-btn {
+            background: #4ecdc4;
+            color: #0f172a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+        }
+        .verify-btn {
+            background: #fbbf24;
+            color: #0f172a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+        }
+        .completed-badge {
+            background: #10b981;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 50px;
+            color: #94a3b8;
+        }
+        @media (max-width: 600px) {
+            .orders-grid { grid-template-columns: 1fr; }
+            .admin-header { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <div id="adminApp">
+        <!-- Pantalla de login -->
+        <div v-if="!authenticated" class="login-box">
+            <h2>🔐 Panel Admin</h2>
+            <input type="password" v-model="password" placeholder="Contraseña" @keyup.enter="login">
+            <button @click="login">Ingresar</button>
+        </div>
+
+        <!-- Panel principal -->
+        <div v-else class="container">
+            <div class="admin-header">
+                <h1>📋 GESTIÓN DE VENTAS</h1>
+                <div class="search-box">
+                    🔍 <input type="text" v-model="searchText" placeholder="Buscar por ID o Referencia...">
+                </div>
+                <button class="logout-btn" @click="logout">🚪 Salir</button>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="stats">
+                <div class="stat-card"><div class="stat-number">{{ total }}</div><div class="stat-label">Total Pedidos</div></div>
+                <div class="stat-card"><div class="stat-number">{{ pendientes }}</div><div class="stat-label">Pendientes</div></div>
+                <div class="stat-card"><div class="stat-number">{{ verificando }}</div><div class="stat-label">En Verificación</div></div>
+                <div class="stat-card"><div class="stat-number">{{ completadas }}</div><div class="stat-label">Completadas</div></div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="filters">
+                <div v-for="f in ['Todos', 'Pendiente', 'Verificando', 'Completada']" :key="f"
+                     :class="['filter-btn', { active: filtro === f }]" @click="filtro = f">
+                    {{ f }}
+                </div>
+            </div>
+
+            <!-- Grid de pedidos -->
+            <div class="orders-grid">
+                <div v-for="pedido in pedidosFiltrados" :key="pedido.id" 
+                     :class="['order-card', pedido.estado.toLowerCase()]">
+                    <div class="card-header">
+                        <span class="order-id">#{{ pedido.id.slice(-8) }}</span>
+                        <span :class="['order-status', 'status-' + pedido.estado.toLowerCase()]">
+                            {{ pedido.estado === 'Pendiente' ? '⏳ PENDIENTE' : (pedido.estado === 'Verificando' ? '🔄 EN VERIFICACIÓN' : '✅ COMPLETADA') }}
+                        </span>
+                    </div>
+                    <div class="order-product">{{ pedido.juego }} - {{ pedido.servicio }}</div>
+                    <div class="order-detail"><span>👤 ID/Usuario:</span><span>{{ pedido.usuario }}</span></div>
+                    <div class="order-detail"><span>💰 Monto:</span><span>{{ pedido.monto }} Bs</span></div>
+                    <div class="order-detail"><span>📅 Fecha:</span><span>{{ formatDate(pedido.fecha) }}</span></div>
+                    <div class="order-detail"><span>🏦 Referencia:</span><span class="order-ref">{{ pedido.referencia }}</span></div>
+                    
+                    <div class="card-actions" v-if="pedido.estado !== 'Completada'">
+                        <button v-if="pedido.estado === 'Pendiente'" class="verify-btn" @click="cambiarEstado(pedido.id, 'Verificando')">
+                            🔍 CONFIRMAR PEDIDO
+                        </button>
+                        <button v-if="pedido.estado === 'Verificando'" class="confirm-btn" @click="cambiarEstado(pedido.id, 'Completada')">
+                            ✅ MARCAR ENTREGADO
+                        </button>
+                    </div>
+                    <div v-else class="completed-badge">
+                        ✔ PEDIDO ENTREGADO
+                    </div>
+                </div>
+                <div v-if="pedidosFiltrados.length === 0" class="no-results">
+                    No hay pedidos que coincidan con la búsqueda o filtro.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, collection, onSnapshot, doc, updateDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCGkhRz8Go1mc4EEKWfs_t7WUdPTV-ELcY",
+            authDomain: "recargas-gamers-bcdaa.firebaseapp.com",
+            projectId: "recargas-gamers-bcdaa",
+            storageBucket: "recargas-gamers-bcdaa.firebasestorage.app",
+            messagingSenderId: "322658892724",
+            appId: "1:322658892724:web:a60d1c9c1b9825f72d50e1"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const ADMIN_PASSWORD = "admin123"; // Cámbiala por la que quieras
+
+        new Vue({
+            el: '#adminApp',
+            data: {
+                authenticated: false,
+                password: '',
+                pedidos: [],
+                filtro: 'Todos',
+                searchText: ''
+            },
+            computed: {
+                total() { return this.pedidos.length; },
+                pendientes() { return this.pedidos.filter(p => p.estado === 'Pendiente').length; },
+                verificando() { return this.pedidos.filter(p => p.estado === 'Verificando').length; },
+                completadas() { return this.pedidos.filter(p => p.estado === 'Completada').length; },
+                pedidosFiltrados() {
+                    let result = this.pedidos;
+                    if (this.filtro !== 'Todos') {
+                        result = result.filter(p => p.estado === this.filtro);
+                    }
+                    if (this.searchText.trim()) {
+                        const term = this.searchText.toLowerCase();
+                        result = result.filter(p => 
+                            p.id.toLowerCase().includes(term) || 
+                            p.referencia?.toLowerCase().includes(term) ||
+                            p.usuario?.toLowerCase().includes(term)
+                        );
+                    }
+                    return result;
+                }
+            },
+            methods: {
+                login() {
+                    if (this.password === ADMIN_PASSWORD) {
+                        this.authenticated = true;
+                        this.cargarPedidos();
+                    } else {
+                        alert('Contraseña incorrecta');
+                    }
+                },
+                logout() {
+                    this.authenticated = false;
+                    this.pedidos = [];
+                    this.searchText = '';
+                },
+                cargarPedidos() {
+                    const q = query(collection(db, "ventas"), orderBy("fecha", "desc"));
+                    onSnapshot(q, (snapshot) => {
+                        this.pedidos = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data(),
+                            fecha: doc.data().fecha?.toDate() || new Date()
+                        }));
+                    });
+                },
+                async cambiarEstado(id, nuevoEstado) {
+                    const docRef = doc(db, "ventas", id);
+                    await updateDoc(docRef, { estado: nuevoEstado });
+                },
+                formatDate(date) {
+                    if (!date) return '--/--/----';
+                    const d = new Date(date);
+                    return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()} - ${d.getHours()}:${d.getMinutes().toString().padStart(2,'0')}`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

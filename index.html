@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Recargas Games - Oficial</title>
+    <title>Recargas Games - Tienda Oficial</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -390,6 +390,40 @@
             padding: 40px;
             color: #94a3b8;
         }
+        .reintentar-btn {
+            background: #4ecdc4;
+            color: #0f172a;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Botón flotante de WhatsApp */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            background-color: #25D366;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: transform 0.3s, background-color 0.3s;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            background-color: #128C7E;
+        }
     </style>
 </head>
 <body>
@@ -467,8 +501,14 @@
             <div id="historialLista" class="historial-lista">
                 <div class="sin-pedidos">Cargando...</div>
             </div>
+            <div style="text-align: center; margin-top: 10px;">
+                <button id="reintentarHistorial" class="reintentar-btn" style="display: none;">🔄 Reintentar</button>
+            </div>
         </div>
     </div>
+
+    <!-- Botón flotante de WhatsApp -->
+    <a href="https://wa.me/584228242411" class="whatsapp-float" target="_blank">💬</a>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
@@ -487,14 +527,13 @@
         const TELEGRAM_TOKEN = "8507458446:AAELLs-vpfikmyWFVJT7vJG7T4N0yXJ8FyY";
         const TELEGRAM_CHAT_ID = "8452807558";
         
-        // === IDENTIFICADOR ÚNICO PERSISTENTE (se guarda al primer pedido y no se pierde) ===
+        // === IDENTIFICADOR ÚNICO PERSISTENTE ===
         let clienteId = localStorage.getItem("clienteId");
         if (!clienteId) {
-            // Generar un ID único (ej: "user_1734567890123_abc123")
             clienteId = "user_" + Date.now() + "_" + Math.random().toString(36).substring(2, 8);
             localStorage.setItem("clienteId", clienteId);
         }
-        console.log("Tu ID de cliente (no lo necesitas recordar):", clienteId);
+        console.log("Cliente ID (automático):", clienteId);
         
         const productos = {
             freefire: [
@@ -542,7 +581,7 @@
         async function guardarEnFirebase(pedido) {
             try {
                 const docRef = await addDoc(collection(db, "ventas"), {
-                    clienteId: clienteId,   // ← identifica al cliente automáticamente
+                    clienteId: clienteId,
                     usuario: pedido.usuario,
                     juego: pedido.juego,
                     servicio: pedido.servicio,
@@ -625,24 +664,48 @@
             else html = `<div class="form-group"><label>🆔 ID / USUARIO</label><input type="text" id="userId" placeholder="Tu identificador"></div>`;
             html += `<div class="form-group"><label>🏦 REFERENCIA DE PAGO</label><input type="text" id="refPago" placeholder="Número de confirmación"></div>`;
             document.getElementById('dynamicFields').innerHTML = html;
+            
             if (game === 'freefire') {
                 const userIdInput = document.getElementById('userId');
                 if (userIdInput) {
                     userIdInput.onblur = async function() {
-                        if (!this.value) return;
+                        const uid = this.value.trim();
                         const statusDiv = document.getElementById('vStatus');
-                        if (statusDiv) statusDiv.innerText = "🔍 Buscando...";
+                        if (!uid) {
+                            statusDiv.innerHTML = '';
+                            nickVerificado = '';
+                            return;
+                        }
+                        statusDiv.innerHTML = '🔄 Verificando ID con API oficial...';
+                        statusDiv.className = 'verify-result loading';
+                        
+                        const apiUrl = 'https://developers.freefirecommunity.com/api/v1/info';
+                        const apiKey = 'ffc_momryhse_nixuxcj9ztm2eoytiytspe';
+                        const region = 'ind';
+                        
                         try {
-                            const r = await fetch(`https://wlx-demon-info.vercel.app/profile_info?uid=${this.value}&region=id&key=FFwlx`);
-                            const d = await r.json();
-                            if (d.success) {
-                                nickVerificado = d.AccountInfo.AccountName;
-                                if (statusDiv) statusDiv.innerHTML = `<span style="color:#4ecdc4">✅ ${nickVerificado}</span>`;
-                            } else statusDiv.innerHTML = `<span style="color:#ff6b6b">❌ No encontrado</span>`;
-                        } catch (e) { statusDiv.innerText = ""; }
+                            const response = await fetch(`${apiUrl}?uid=${uid}&region=${region}&key=${apiKey}`);
+                            const data = await response.json();
+                            if (data.basicInfo && data.basicInfo.nickname) {
+                                nickVerificado = data.basicInfo.nickname;
+                                statusDiv.innerHTML = `✅ ${nickVerificado} (Nivel: ${data.basicInfo.level})`;
+                                statusDiv.className = 'verify-result success';
+                            } else {
+                                nickVerificado = '';
+                                statusDiv.innerHTML = '❌ ID no encontrado. Verifica que sea correcto.';
+                                statusDiv.className = 'verify-result error';
+                            }
+                        } catch (error) {
+                            console.error('Error API:', error);
+                            nickVerificado = '';
+                            statusDiv.innerHTML = '⚠️ Error de conexión. El ID se guardará igualmente.';
+                            statusDiv.className = 'verify-result error';
+                        }
                     };
                 }
-            } else nickVerificado = "";
+            } else {
+                nickVerificado = "";
+            }
             document.getElementById('pagoModulo').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -698,14 +761,16 @@ ${idLabel}: ${id} ${nickVerificado ? `(${nickVerificado})` : ''}
             btn.innerText = "📨 ENVIAR PEDIDO";
         };
 
-        // ==================== HISTORIAL AUTOMÁTICO (persistente entre sesiones) ====================
+        // ==================== HISTORIAL DE PEDIDOS ====================
         const modal = document.getElementById('historialModal');
         const btnHistorial = document.getElementById('btnHistorial');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const historialLista = document.getElementById('historialLista');
+        const reintentarBtn = document.getElementById('reintentarHistorial');
 
         async function cargarHistorial() {
             historialLista.innerHTML = '<div class="sin-pedidos">🔄 Cargando tus pedidos...</div>';
+            reintentarBtn.style.display = 'none';
             try {
                 const q = query(collection(db, "ventas"), where("clienteId", "==", clienteId), orderBy("fecha", "desc"));
                 const querySnapshot = await getDocs(q);
@@ -742,12 +807,28 @@ ${idLabel}: ${id} ${nickVerificado ? `(${nickVerificado})` : ''}
                     `;
                 });
                 historialLista.innerHTML = html;
-            } catch (error) { historialLista.innerHTML = '<div class="sin-pedidos">❌ Error al cargar el historial</div>'; }
+            } catch (error) {
+                console.error("Error cargando historial:", error);
+                let mensajeError = '❌ Error al cargar el historial: ';
+                if (error.message.includes('index')) {
+                    mensajeError += 'Falta un índice en Firebase. Por favor, contacta al soporte para solucionarlo.';
+                    reintentarBtn.style.display = 'inline-block';
+                } else if (error.message.includes('permission')) {
+                    mensajeError += 'Permisos insuficientes. El administrador debe ajustar las reglas de seguridad.';
+                } else {
+                    mensajeError += error.message;
+                }
+                historialLista.innerHTML = `<div class="sin-pedidos">${mensajeError}</div>`;
+            }
         }
 
-        btnHistorial.onclick = () => { modal.style.display = 'flex'; cargarHistorial(); };
+        btnHistorial.onclick = () => {
+            modal.style.display = 'flex';
+            cargarHistorial();
+        };
         closeModalBtn.onclick = () => modal.style.display = 'none';
         window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+        reintentarBtn.onclick = () => cargarHistorial();
     </script>
 </body>
 </html>
